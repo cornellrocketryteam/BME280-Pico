@@ -1,5 +1,5 @@
 #ifndef BME280_HPP
-#define BME380_HPP
+#define BME280_HPP
 
 #include "bme280/bme280.h"
 #include "bme280/bme280_defs.h"
@@ -48,21 +48,20 @@ public:
     // bool reset();
 
 private:
-    /**
-     * Reads the electronic ID of the BME280.
-     * @param buf The resulting electronic ID 
-     */
-    bool get_id(uint8_t *buf);
-
-    /**
-     * Return value for I2C reads and writes.
-     */
-    int ret;
 
     /**
      * The I2C bus.
      */
     i2c_inst_t *i2c;
+
+    /**
+     * BME280 device structures
+     */
+    struct bme280_dev device;
+
+    static BME280_INTF_RET_TYPE i2c_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t len, void *intf_ptr);
+    static BME280_INTF_RET_TYPE i2c_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t len, void *intf_ptr);
+    static void delay_us(uint32_t us, void *intf_ptr);
 };
 
 #endif // BME280_HPP
