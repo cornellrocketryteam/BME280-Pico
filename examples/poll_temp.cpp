@@ -3,15 +3,15 @@
 #include <cstdio>
 
 #define I2C_PORT i2c0
-#define I2C_SDA 12
-#define I2C_SCL 13
+#define I2C_SDA 0
+#define I2C_SCL 1
 
 BME280 sensor(I2C_PORT);
 
 int main() {
     stdio_init_all();
 
-    i2c_init(I2C_PORT, 400 * 1000);
+    i2c_init(I2C_PORT, 100 * 1000);
     gpio_set_function(I2C_SDA, GPIO_FUNC_I2C);
     gpio_set_function(I2C_SCL, GPIO_FUNC_I2C);
 
@@ -28,9 +28,9 @@ int main() {
         sleep_ms(1000);
     }
 
-    float temperature;
+    printf("Sensor initialized");
 
-    sensor.read_temperature(&temperature);
+    float temperature;
 
     while (true) {
         if (!sensor.read_temperature(&temperature)) {
@@ -38,7 +38,7 @@ int main() {
         }
 
         printf("Temperature: %.2f\n\n", temperature);
-        sleep_ms(20);
+        sleep_ms(50);
     }
 
     return 0;
