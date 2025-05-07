@@ -6,7 +6,6 @@
 #include "hardware/i2c.h"
 #include "pico/stdlib.h"
 
-#define BME280_ADDR (0x76)
 #define BME280_DEVICE_ID (0x60)
 #define BME280_BYTE_TIMEOUT_US (1500)
 #define SAMPLE_COUNT  UINT8_C(50)
@@ -19,13 +18,19 @@ public:
     /**
      * Initializes a BME280 object on an I2C bus.
      * @param i2c_type The I2C bus that the sensor is on
+     * @param addr The sensor address. Default is 0x76
+     * (SDO pin connected to GND), but can be set to 0x77
+     * (SDO pin connected to VDDIO).
      */
     BME280(i2c_inst_t *i2c_type);
 
     /**
-     * 
+     * Configures the sensor with appropriate settings.
+     * @param addr The sensor address. Default is 0x76
+     * (SDO pin connected to GND), but can be set to 0x77
+     * (SDO pin connected to VDDIO).
      */
-    bool begin();  
+    bool begin(uint8_t addr = 0x76);  
 
     /**
      * Reads a temperaure value in degrees Celsius at 0.01
@@ -53,6 +58,12 @@ private:
      * The I2C bus.
      */
     i2c_inst_t *i2c;
+
+    /**
+     * The sensor address. Value can be either
+     * 0x76 or 0x77.
+     */
+    static uint8_t bme280_addr;
 
     /**
      * BME280 device structures
