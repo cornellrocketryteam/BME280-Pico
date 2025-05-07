@@ -23,7 +23,7 @@ int main() {
     }
     printf("Connected\n");
 
-    while (!sensor.begin()) {
+    while (!sensor.begin(0x77)) {
         printf("Error: Sensor failed to initialize\n");
         sleep_ms(1000);
     }
