@@ -4,6 +4,7 @@
 
 uint8_t BME280::bme280_addr;
 uint32_t period;
+#define ADDR (0x76)
 
 BME280::BME280(i2c_inst_t *i2c_type){
     i2c = i2c_type;
@@ -21,7 +22,7 @@ bool BME280::begin(uint8_t addr) {
     struct bme280_settings settings;
     uint8_t settings_sel;
 
-    if ((addr != 0x76) || (addr != 0x77)){
+    if ((addr != 0x76) && (addr != 0x77)){
         printf("Invalid address argument. Only accepted addresses are 0x76 and 0x77.");
         return false;
     }
