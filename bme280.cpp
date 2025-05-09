@@ -121,18 +121,13 @@ bool BME280::read_temperature(float* temperature){
             /* Read compensated data */
             rslt = bme280_get_sensor_data(BME280_TEMP, &comp_data, &device);
             if (rslt != BME280_OK) {
+#ifdef DEBUG                
                 printf("Sensor read error: %d\n", rslt);
+#endif
                 return false;
             }
-
-#ifndef BME280_DOUBLE_ENABLE
-            comp_data.temperature = comp_data.temperature / 100;
-#endif
-
-#ifdef BME280_DOUBLE_ENABLE
+#ifdef DEBUG
             printf("Temperature[%d]:   %lf ºC\n", idx, comp_data.temperature);
-#else
-            printf("Temperature[%d]:   %ld deg C\n", idx, (long int)comp_data.temperature);
 #endif
             idx++;
         }
