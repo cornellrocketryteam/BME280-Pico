@@ -63,7 +63,13 @@ private:
      * The sensor address. Value can be either
      * 0x76 or 0x77.
      */
-    static uint8_t bme280_addr;
+    uint8_t bme280_addr;
+
+    /** 
+     * Period used in delay calculations.
+     */
+    uint32_t period;
+
 
     /**
      * BME280 device structures

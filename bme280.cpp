@@ -2,10 +2,6 @@
 #include <cstdio>
 #include <cstring>
 
-uint8_t BME280::bme280_addr;
-uint32_t period;
-#define ADDR (0x76)
-
 BME280::BME280(i2c_inst_t *i2c_type){
     i2c = i2c_type;
 
@@ -13,7 +9,7 @@ BME280::BME280(i2c_inst_t *i2c_type){
     device.read = &i2c_read;
     device.write = &i2c_write;
     device.delay_us = &delay_us;
-    device.intf_ptr = i2c;
+    device.intf_ptr = this;
 }
 
 bool BME280::begin(uint8_t addr) {
@@ -26,7 +22,7 @@ bool BME280::begin(uint8_t addr) {
         printf("Invalid address argument. Only accepted addresses are 0x76 and 0x77.");
         return false;
     }
-    bme280_addr = addr;
+    this->bme280_addr = addr;
 
     // Check Chip ID right away
     uint8_t chip_id = 0;
@@ -120,7 +116,7 @@ bool BME280::read_temperature(float* temperature){
         if (!(status_reg & BME280_STATUS_MEAS_DONE))
         {
             /* Measurement time delay given to read sample */
-            device.delay_us(period, device.intf_ptr);
+            device.delay_us(this->period, device.intf_ptr);
 
             /* Read compensated data */
             rslt = bme280_get_sensor_data(BME280_TEMP, &comp_data, &device);
@@ -146,25 +142,29 @@ bool BME280::read_temperature(float* temperature){
 }
 
 BME280_INTF_RET_TYPE BME280::i2c_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t len, void *intf_ptr) {
-    i2c_inst_t *i2c = static_cast<i2c_inst_t *>(intf_ptr);
+    BME280 *self = static_cast<BME280 *>(intf_ptr);
+    i2c_inst_t *i2c = self->i2c;
+    uint8_t addr = self->bme280_addr;
 
-    if (i2c_write_timeout_us(i2c, bme280_addr, &reg_addr, 1, true, BME280_BYTE_TIMEOUT_US) < 1) {
+    if (i2c_write_timeout_us(i2c, addr, &reg_addr, 1, true, BME280_BYTE_TIMEOUT_US) < 1) {
         return 1;
     }
-    if (i2c_read_timeout_us(i2c, bme280_addr, reg_data, len, false, len * BME280_BYTE_TIMEOUT_US) < 1) {
+    if (i2c_read_timeout_us(i2c, addr, reg_data, len, false, len * BME280_BYTE_TIMEOUT_US) < 1) {
         return 1;
     }
     return BME280_INTF_RET_SUCCESS;
 }
 
 BME280_INTF_RET_TYPE BME280::i2c_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t len, void *intf_ptr) {
-    i2c_inst_t *i2c = static_cast<i2c_inst_t *>(intf_ptr);
+    BME280 *self = static_cast<BME280 *>(intf_ptr);
+    i2c_inst_t *i2c = self->i2c;
+    uint8_t addr = self->bme280_addr;
 
     uint8_t buf[len + 1];
     buf[0] = reg_addr;
     memcpy(&buf[1], reg_data, len);
 
-    if (i2c_write_timeout_us(i2c, bme280_addr, buf, len + 1, false, (len + 1) * BME280_BYTE_TIMEOUT_US) < 1) {
+    if (i2c_write_timeout_us(i2c, addr, buf, len + 1, false, (len + 1) * BME280_BYTE_TIMEOUT_US) < 1) {
         return 1;
     }
     return BME280_INTF_RET_SUCCESS;

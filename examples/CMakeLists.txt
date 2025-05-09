@@ -17,7 +17,7 @@ add_compile_options(
 )
 
 add_executable(${PROJECT_NAME}
-    poll_temp.cpp
+    two_sensors.cpp
     ../bme280.cpp
     ../bme280/bme280.c
 )
