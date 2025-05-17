@@ -18,13 +18,14 @@ bool BME280::begin(uint8_t addr) {
     struct bme280_settings settings;
     uint8_t settings_sel;
 
+    // Validate provided address argument 
     if ((addr != 0x76) && (addr != 0x77)){
         printf("Invalid address argument. Only accepted addresses are 0x76 and 0x77.");
         return false;
     }
     this->bme280_addr = addr;
 
-    // Check Chip ID right away
+    // Check chip ID 
     uint8_t chip_id = 0;
     rslt = bme280_get_regs(BME280_REG_CHIP_ID, &chip_id, 1, &device);
     if (rslt != BME280_OK || chip_id != BME280_CHIP_ID) {
@@ -32,6 +33,7 @@ bool BME280::begin(uint8_t addr) {
         return false;
     }
 
+    // Check that sensor initializes 
     rslt = bme280_init(&device);
     printf("Init result: %d\n", rslt);
     if (rslt != BME280_OK) {
@@ -39,6 +41,7 @@ bool BME280::begin(uint8_t addr) {
         return false;
     }
 
+    // Set sensors 
     rslt = bme280_get_sensor_settings(&settings, &device);
     if (rslt != BME280_OK) {
         printf("Sensor settings retrieval failed: %d\n", rslt);

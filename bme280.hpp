@@ -18,9 +18,6 @@ public:
     /**
      * Initializes a BME280 object on an I2C bus.
      * @param i2c_type The I2C bus that the sensor is on
-     * @param addr The sensor address. Default is 0x76
-     * (SDO pin connected to GND), but can be set to 0x77
-     * (SDO pin connected to VDDIO).
      */
     BME280(i2c_inst_t *i2c_type);
 
@@ -38,19 +35,6 @@ public:
      * @param temperature The resulting temperature
      */
     bool read_temperature(float *temperature);
-
-    /**
-     * Reads pressure, temperature, and humidity data.
-     * @param pressure The resulting pressure
-     * @param temperature The resulting temperature
-     * @param humidity The resulting humidity
-     */
-    // bool read_data(float *pressure, float *temperature, float *humidity)
-
-    /**
-     * Triggers a software reset of the BME280.
-     */
-    // bool reset();
 
 private:
 
